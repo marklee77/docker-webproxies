@@ -16,17 +16,19 @@ RUN apt-get update && \
         tor && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
-#WORKDIR /srv/supervisord
+WORKDIR /srv/supervisord
 
-#COPY run.sh ./run.sh
-#COPY supervisord.conf ./supervisord.conf
+COPY supervisord.conf ./supervisord.conf
+RUN chmod 644 ./supervisord.conf
 
-#RUN chown -R namecoin:namecoin . && \
-#    chmod 755 ./run.sh && \
-#    chmod 644 ./supervisord.conf
+COPY etc/tor/torrc /etc/tor/torrc
+RUN chmod 755 /etc/tor/torrc && \
+    mkdir -p /var/run/tor && \
+    chown debian-tor:debian-tor /var/run/tor && \
+    chmod 700 /var/run/tor
 
-#VOLUME /srv/supervisord /var/cache
+VOLUME /srv/supervisord /var/cache /var/run
 
-#EXPOSE 3128 3129 9050 9053/udp
+EXPOSE 3128 3129 4444 4445 8118 9050 9051 9053/udp
 
-#CMD ["/srv/supervisord/run.sh"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "./supervisord.conf"]
