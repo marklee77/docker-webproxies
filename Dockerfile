@@ -1,26 +1,30 @@
 FROM ubuntu:trusty
 MAINTAINER Mark Stillwell <mark@stillwell.me>
 
+# fixme: get i2p repo... tor repo? privoxy?
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get -y install \
+        curl \
+        privoxy \
         squid3 \
-        squidguard && \
+        squidguard \
+        supervisor \
+        tor && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
-RUN useradd -m -s /bin/bash namecoin
 
-WORKDIR /home/webproxies
+#WORKDIR /srv/supervisord
 
-COPY run.sh ./run.sh
-COPY supervisord.conf ./supervisord.conf
+#COPY run.sh ./run.sh
+#COPY supervisord.conf ./supervisord.conf
 
-RUN chown -R namecoin:namecoin . && \
-    chmod 755 ./run.sh && \
-    chmod 644 ./supervisord.conf
+#RUN chown -R namecoin:namecoin . && \
+#    chmod 755 ./run.sh && \
+#    chmod 644 ./supervisord.conf
 
-VOLUME /home/namecoin
+#VOLUME /srv/supervisord /var/cache
 
-EXPOSE 8053/udp 8336 9000
+#EXPOSE 3128 3129 9050 9053/udp
 
-CMD ["/home/namecoin/run.sh"]
+#CMD ["/srv/supervisord/run.sh"]
