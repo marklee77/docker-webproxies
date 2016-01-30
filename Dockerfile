@@ -18,9 +18,9 @@ RUN apt-add-repository \
         tor && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
-COPY etc/squid3/squid.conf /etc/squid3/squid.conf
-COPY etc/squidguard/squidGuard.conf /etc/squidguard/squidGuard.conf
-COPY etc/squidguard/blacklisted.html /etc/squidguard/blacklisted.html
+COPY files/etc/squid3/squid.conf /etc/squid3/squid.conf
+COPY files/etc/squidguard/squidGuard.conf /etc/squidguard/squidGuard.conf
+COPY files/etc/squidguard/blacklisted.html /etc/squidguard/blacklisted.html
 RUN chmod 644 /etc/squid3/squid.conf && \
     chmod 644 /etc/squidguard/squidGuard.conf && \
     chmod 644 /etc/squidguard/blacklisted.html && \
@@ -33,8 +33,8 @@ RUN chmod 644 /etc/squid3/squid.conf && \
         > /etc/service/squid3/run && \
     chmod 755 /etc/service/squid3/run
 
-COPY etc/privoxy/config /etc/privoxy/config
-COPY etc/privoxy/user.action /etc/privoxy/user.action
+COPY files/etc/privoxy/config /etc/privoxy/config
+COPY files/etc/privoxy/user.action /etc/privoxy/user.action
 RUN chmod 644 /etc/privoxy/config /etc/privoxy/user.action && \
     mkdir /etc/service/privoxy && \
     echo \
@@ -42,7 +42,7 @@ RUN chmod 644 /etc/privoxy/config /etc/privoxy/user.action && \
         > /etc/service/privoxy/run && \
     chmod 755 /etc/service/privoxy/run
 
-COPY etc/tor/torrc /etc/tor/torrc
+COPY files/etc/tor/torrc /etc/tor/torrc
 RUN chmod 755 /etc/tor/torrc && \
     mkdir -p /var/run/tor && \
     chown debian-tor:debian-tor /var/run/tor && \
@@ -52,8 +52,10 @@ RUN chmod 755 /etc/tor/torrc && \
         > /etc/service/tor/run && \
     chmod 755 /etc/service/tor/run
 
-RUN mkdir /etc/service/i2p && \
-    echo "#!/bin/sh\nexec /sbin/setuser i2psvc /usrbin/i2prouter console" \
+COPY files/var/lib/i2p/i2p-config /var/lib/i2p/i2p-config
+RUN chown -R i2psvc:i2psvc /var/lib/i2p && \
+    mkdir /etc/service/i2p && \
+    echo "#!/bin/sh\nexec /sbin/setuser i2psvc /usr/bin/i2prouter console" \
         > /etc/service/i2p/run && \
     chmod 755 /etc/service/i2p/run
 
