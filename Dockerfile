@@ -1,11 +1,13 @@
-FROM ubuntu:trusty
+FROM phusion/baseimage
 MAINTAINER Mark Stillwell <mark@stillwell.me>
 
-# fixme: get i2p repo... tor repo? privoxy?
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get -y install software-properties-common && \
     apt-add-repository ppa:i2p-maintainers/i2p && \
+    apt-add-repository "deb http://deb.torproject.org/torproject.org $(lsb_release -sc) main" && \
+    gpg --keyserver keys.gnupg.net --recv 886DDD89 && \
+    gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | sudo apt-key add - && \
     apt-get update && \
     apt-get -y install \
         curl \
@@ -14,6 +16,7 @@ RUN apt-get update && \
         squid3 \
         squidguard \
         supervisor \
+        deb.torproject.org-keyring \
         tor && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
