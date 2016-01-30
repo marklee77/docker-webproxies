@@ -25,12 +25,6 @@ WORKDIR /srv/supervisord
 COPY supervisord.conf ./supervisord.conf
 RUN chmod 644 ./supervisord.conf
 
-COPY etc/tor/torrc /etc/tor/torrc
-RUN chmod 755 /etc/tor/torrc && \
-    mkdir -p /var/run/tor && \
-    chown debian-tor:debian-tor /var/run/tor && \
-    chmod 700 /var/run/tor
-
 COPY etc/squid3/squid.conf /etc/squid3/squid.conf
 COPY etc/squidguard/squidGuard.conf /etc/squidguard/squidGuard.conf
 COPY etc/squidguard/blacklisted.html /etc/squidguard/blacklisted.html
@@ -41,6 +35,16 @@ RUN  chmod 644 /etc/squid3/squid.conf && \
      curl -s http://www.shallalist.de/Downloads/shallalist.tar.gz | tar xzf - && \
      /usr/bin/squidGuard -C all && \
      chown -R proxy:proxy /var/lib/squidguard/db
+
+COPY etc/privoxy/config /etc/privoxy/config
+COPY etc/privoxy/user.action /etc/privoxy/user.action
+RUN chmod 644 /etc/privoxy/config /etc/privoxy/user.action
+
+COPY etc/tor/torrc /etc/tor/torrc
+RUN chmod 755 /etc/tor/torrc && \
+    mkdir -p /var/run/tor && \
+    chown debian-tor:debian-tor /var/run/tor && \
+    chmod 700 /var/run/tor
 
 VOLUME /srv/supervisord /var/cache /var/run
 
